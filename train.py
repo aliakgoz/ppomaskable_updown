@@ -148,6 +148,12 @@ def main() -> None:
 
     if args.resume:
         model = MaskablePPO.load(args.resume, env=env, device=cfg.train.device)
+        # Force LR override on resume so new config takes effect.
+        model.learning_rate = cfg.ppo.learning_rate
+        model.lr_schedule = lambda _: cfg.ppo.learning_rate
+        if getattr(model.policy, "optimizer", None) is not None:
+            for group in model.policy.optimizer.param_groups:
+                group["lr"] = cfg.ppo.learning_rate
     else:
         model = MaskablePPO(
             "MlpPolicy",

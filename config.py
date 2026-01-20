@@ -20,6 +20,7 @@ class EnvConfig:
     min_bullets: int = 5
     min_bullets_penalty: float = 10.0
     force_min_bullets_mask: bool = True
+    hedge_bonus_k: float = 0.02
     amount_min: float = 4.0
     amount_max: float = 20.0
     amount_step: float = 1.0

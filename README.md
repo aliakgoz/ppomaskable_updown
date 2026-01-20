@@ -45,6 +45,8 @@ python eval.py --model checkpoints/ppo_maskable_latest.zip
 - Amount buckets are 4.00 to 20.00 by 1.00 (17 buckets).
 - Prices are always 2-decimal and p_up + p_down == 1.00 after rounding.
 - Reward is worst-case delta with loss aversion, plus optional pacing penalty.
+- Hedge bonus: `hedge_bonus_k` adds a small reward proportional to
+  `min(q_up, q_down)` to encourage balanced hedging.
 - Minimum bullets: by default `min_bullets=5`. If fewer are used, a terminal
   penalty is applied (`min_bullets_penalty=10.0` by default). Set
   `min_bullets=0` to disable.

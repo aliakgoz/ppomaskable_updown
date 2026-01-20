@@ -201,6 +201,10 @@ class UpDownEnv(gym.Env):
         delta = (worst - self.prev_worst) / float(self.cfg.env.initial_cash)
         reward = delta if delta >= 0 else self.cfg.env.loss_factor * delta
 
+        if self.cfg.env.hedge_bonus_k > 0:
+            hedge = min(q_up, q_down) / float(self.cfg.env.initial_cash)
+            reward += self.cfg.env.hedge_bonus_k * hedge
+
         if self.cfg.env.pacing_enabled:
             time_progress = self.state.t / float(self.cfg.env.episode_length - 1)
             bullets_used = self.cfg.env.max_bullets - self.state.bullets_left

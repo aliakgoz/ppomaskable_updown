@@ -205,6 +205,14 @@ class UpDownEnv(gym.Env):
         terminated = self.state.t >= self.cfg.env.episode_length - 1
         truncated = False
 
+        bullets_used = self.cfg.env.max_bullets - self.state.bullets_left
+        if terminated and self.cfg.env.min_bullets > 0:
+            missing = max(0, self.cfg.env.min_bullets - bullets_used)
+            if missing > 0:
+                reward -= self.cfg.env.min_bullets_penalty * (
+                    missing / float(self.cfg.env.max_bullets)
+                )
+
         info = self._build_info(p_up)
         info["action_mask"] = action_mask
         info["invalid_action"] = 1 if invalid else 0
@@ -229,6 +237,7 @@ class UpDownEnv(gym.Env):
         v_down = cash + q_down
         worst = min(v_up, v_down)
         bullets_used = self.cfg.env.max_bullets - self.state.bullets_left
+        missing = max(0, self.cfg.env.min_bullets - bullets_used)
         p_mean = self._p_sum / float(self.cfg.env.episode_length)
         return {
             "cash_final": cash,
@@ -238,6 +247,7 @@ class UpDownEnv(gym.Env):
             "V_down_final": v_down,
             "worst_final": worst,
             "bullets_used": bullets_used,
+            "min_bullets_missing": missing,
             "p_min": self._p_min,
             "p_mean": p_mean,
             "p_max": self._p_max,
@@ -249,6 +259,7 @@ class UpDownEnv(gym.Env):
     def _build_info(self, p_up: float) -> Dict[str, float]:
         p_mean = self._p_sum / float(max(1, self.state.t + 1))
         bullets_used = self.cfg.env.max_bullets - self.state.bullets_left
+        missing = max(0, self.cfg.env.min_bullets - bullets_used)
         return {
             "p_up": p_up,
             "p_min": self._p_min,
@@ -259,6 +270,7 @@ class UpDownEnv(gym.Env):
             "q_down": self.state.q_down,
             "bullets_left": self.state.bullets_left,
             "bullets_used": bullets_used,
+            "min_bullets_missing": missing,
             "invalid_actions": self._invalid_actions,
             "action_counts": dict(self._action_counts),
         }

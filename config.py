@@ -51,7 +51,7 @@ class PPOConfig:
     batch_size: int = 16384
     n_epochs: int = 10
     total_timesteps: int = 5_000_000
-    learning_rate: float = 3e-4
+    learning_rate: float = 1e-2
     gamma: float = 0.997
     gae_lambda: float = 0.95
     clip_range: float = 0.2

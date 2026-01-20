@@ -158,7 +158,6 @@ def main() -> None:
         vf_coef=cfg.ppo.vf_coef,
         max_grad_norm=cfg.ppo.max_grad_norm,
         target_kl=cfg.ppo.target_kl,
-        use_sde=cfg.ppo.use_sde,
         normalize_advantage=cfg.ppo.normalize_advantage,
         policy_kwargs=policy_kwargs,
         device=cfg.train.device,

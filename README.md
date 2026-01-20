@@ -48,6 +48,8 @@ python eval.py --model checkpoints/ppo_maskable_latest.zip
 - Minimum bullets: by default `min_bullets=5`. If fewer are used, a terminal
   penalty is applied (`min_bullets_penalty=10.0` by default). Set
   `min_bullets=0` to disable.
+- Optional hard mask: `force_min_bullets_mask=true` will disable HOLD when
+  the remaining steps are just enough to satisfy the minimum trade count.
 - Action masking prevents invalid buys (cash, bullets, min price).
 
 ## Data generation

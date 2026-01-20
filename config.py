@@ -19,6 +19,7 @@ class EnvConfig:
     pacing_k: float = 0.005
     min_bullets: int = 5
     min_bullets_penalty: float = 10.0
+    force_min_bullets_mask: bool = True
     amount_min: float = 4.0
     amount_max: float = 20.0
     amount_step: float = 1.0

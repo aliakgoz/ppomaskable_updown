@@ -121,6 +121,14 @@ class UpDownEnv(gym.Env):
                 mask[1 + i] = True
             if self.state.cash >= amt - 1e-9 and p_down >= self.cfg.env.min_price_for_trade:
                 mask[1 + len(self.amounts) + i] = True
+
+        if self.cfg.env.force_min_bullets_mask and self.cfg.env.min_bullets > 0:
+            bullets_used = self.cfg.env.max_bullets - self.state.bullets_left
+            missing = max(0, self.cfg.env.min_bullets - bullets_used)
+            remaining_steps = self.cfg.env.episode_length - self.state.t
+            if missing > 0 and remaining_steps <= missing:
+                if mask[1:].any():
+                    mask[0] = False
         return mask
 
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):

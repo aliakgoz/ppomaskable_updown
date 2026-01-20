@@ -5,7 +5,7 @@ import gymnasium as gym
 import numpy as np
 
 from config import Config
-from price_series import PolymarketSeries, make_series, sample_outcome
+from price_series import make_series, sample_outcome
 from utils import price_pair
 
 
@@ -25,7 +25,6 @@ class UpDownEnv(gym.Env):
         super().__init__()
         self.cfg = cfg
         self._rng = np.random.default_rng(seed)
-        self._poly_source: Optional[PolymarketSeries] = None
         self.amounts = self._build_amount_buckets()
         self.action_dim = 1 + 2 * len(self.amounts)
         self.action_space = gym.spaces.Discrete(self.action_dim)
@@ -128,7 +127,7 @@ class UpDownEnv(gym.Env):
         super().reset(seed=seed)
         if seed is not None:
             self._rng = np.random.default_rng(seed)
-        self.prices, self._poly_source = make_series(self.cfg, self._rng, self._poly_source)
+        self.prices, _ = make_series(self.cfg, self._rng, None)
         self.state = TradeState(
             t=0,
             cash=float(self.cfg.env.initial_cash),

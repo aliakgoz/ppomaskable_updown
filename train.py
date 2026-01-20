@@ -50,6 +50,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--config", type=str, default=None)
     parser.add_argument("--override", nargs="*", default=[])
     parser.add_argument("--smoke", action="store_true")
+    parser.add_argument("--resume", type=str, default=None)
+    parser.add_argument("--reset-timesteps", action="store_true")
     return parser.parse_args()
 
 
@@ -144,25 +146,28 @@ def main() -> None:
         "activation_fn": torch.nn.SiLU,
     }
 
-    model = MaskablePPO(
-        "MlpPolicy",
-        env,
-        n_steps=cfg.ppo.n_steps,
-        batch_size=cfg.ppo.batch_size,
-        n_epochs=cfg.ppo.n_epochs,
-        learning_rate=cfg.ppo.learning_rate,
-        gamma=cfg.ppo.gamma,
-        gae_lambda=cfg.ppo.gae_lambda,
-        clip_range=cfg.ppo.clip_range,
-        ent_coef=cfg.ppo.ent_coef,
-        vf_coef=cfg.ppo.vf_coef,
-        max_grad_norm=cfg.ppo.max_grad_norm,
-        target_kl=cfg.ppo.target_kl,
-        normalize_advantage=cfg.ppo.normalize_advantage,
-        policy_kwargs=policy_kwargs,
-        device=cfg.train.device,
-        verbose=1,
-    )
+    if args.resume:
+        model = MaskablePPO.load(args.resume, env=env, device=cfg.train.device)
+    else:
+        model = MaskablePPO(
+            "MlpPolicy",
+            env,
+            n_steps=cfg.ppo.n_steps,
+            batch_size=cfg.ppo.batch_size,
+            n_epochs=cfg.ppo.n_epochs,
+            learning_rate=cfg.ppo.learning_rate,
+            gamma=cfg.ppo.gamma,
+            gae_lambda=cfg.ppo.gae_lambda,
+            clip_range=cfg.ppo.clip_range,
+            ent_coef=cfg.ppo.ent_coef,
+            vf_coef=cfg.ppo.vf_coef,
+            max_grad_norm=cfg.ppo.max_grad_norm,
+            target_kl=cfg.ppo.target_kl,
+            normalize_advantage=cfg.ppo.normalize_advantage,
+            policy_kwargs=policy_kwargs,
+            device=cfg.train.device,
+            verbose=1,
+        )
 
     new_logger = configure(str(log_dir), ["stdout", "tensorboard"])
     model.set_logger(new_logger)
@@ -195,6 +200,7 @@ def main() -> None:
     model.learn(
         total_timesteps=cfg.ppo.total_timesteps,
         callback=[checkpoint_cb, terminal_cb, eval_cb],
+        reset_num_timesteps=args.reset_timesteps,
     )
 
     model.save(str(model_dir / "ppo_maskable_latest"))

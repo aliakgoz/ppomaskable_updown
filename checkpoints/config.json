@@ -1,0 +1,74 @@
+{
+  "seed": 42,
+  "env": {
+    "episode_length": 900,
+    "initial_cash": 200.0,
+    "max_bullets": 20,
+    "min_price_for_trade": 0.02,
+    "price_eps": 0.01,
+    "n_returns": 10,
+    "q_scale": 200.0,
+    "outcome_mode": "threshold",
+    "loss_factor": 4.0,
+    "pacing_enabled": true,
+    "pacing_k": 0.005,
+    "amount_min": 4.0,
+    "amount_max": 20.0,
+    "amount_step": 1.0
+  },
+  "series": {
+    "mode": "polymarket",
+    "series_dir": "data/series",
+    "polymarket_batch_size": 64,
+    "synthetic_drift": 0.0,
+    "synthetic_sigma_low": 0.02,
+    "synthetic_sigma_high": 0.08,
+    "synthetic_switch_prob": 0.02,
+    "synthetic_mean_reversion": 0.02
+  },
+  "policy": {
+    "pi": [
+      4096,
+      4096,
+      2048,
+      2048,
+      1024
+    ],
+    "vf": [
+      4096,
+      4096,
+      2048,
+      2048,
+      1024
+    ],
+    "activation": "silu"
+  },
+  "ppo": {
+    "n_envs": 64,
+    "n_steps": 2048,
+    "batch_size": 16384,
+    "n_epochs": 10,
+    "total_timesteps": 5000000,
+    "learning_rate": 0.0003,
+    "gamma": 0.997,
+    "gae_lambda": 0.95,
+    "clip_range": 0.2,
+    "ent_coef": 0.001,
+    "vf_coef": 0.5,
+    "max_grad_norm": 0.5,
+    "target_kl": null,
+    "normalize_advantage": true,
+    "use_sde": false
+  },
+  "train": {
+    "device": "cuda",
+    "log_dir": "runs",
+    "model_dir": "checkpoints",
+    "save_freq": 200000,
+    "eval_every": 500000,
+    "eval_episodes": 20,
+    "use_cudnn_benchmark": true,
+    "matmul_precision": "high",
+    "compile": false
+  }
+}
